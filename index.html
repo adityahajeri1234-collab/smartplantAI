@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>SmartPlant AI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav class="navbar">
+
+    <div class="logo">
+        🌱 SmartPlant <span>AI</span>
+    </div>
+
+    <div class="nav-links">
+        <a href="#home">Home</a>
+        <a href="#analyzer">Analyzer</a>
+        <a href="#plants">Plants</a>
+        <a href="#diseases">Diseases</a>
+        <a href="#assistant">AI Assistant</a>
+    </div>
+
+</nav>
+
+
+<!-- HERO -->
+
+<section id="home" class="hero">
+
+    <div class="hero-content">
+
+        <div class="badge">
+            🌿 AI Powered Plant Care
+        </div>
+
+        <h1>
+            Your Intelligent
+            <span>Plant Doctor</span>
+        </h1>
+
+        <p>
+            Upload a leaf or plant image, select soil conditions,
+            explore possible diseases and get practical plant-care ideas.
+        </p>
+
+        <a href="#analyzer" class="hero-button">
+            Start Plant Analysis →
+        </a>
+
+    </div>
+
+    <div class="hero-plant">
+        🌱
+    </div>
+
+</section>
+
+
+<!-- FEATURES -->
+
+<section class="features">
+
+    <div class="feature">
+        <div>📷</div>
+        <h3>Image Analysis</h3>
+        <p>Upload a plant or leaf image.</p>
+    </div>
+
+    <div class="feature">
+        <div>🦠</div>
+        <h3>Disease Guide</h3>
+        <p>Explore common plant diseases.</p>
+    </div>
+
+    <div class="feature">
+        <div>🌾</div>
+        <h3>Soil Advice</h3>
+        <p>Get soil-based care suggestions.</p>
+    </div>
+
+    <div class="feature">
+        <div>🤖</div>
+        <h3>Plant AI</h3>
+        <p>Ask questions about your plant.</p>
+    </div>
+
+</section>
+
+
+<!-- ANALYZER -->
+
+<section id="analyzer" class="section">
+
+    <div class="section-title">
+
+        <span>SMART ANALYZER</span>
+
+        <h2>
+            Analyze Your Plant
+        </h2>
+
+        <p>
+            Upload your image and provide basic information.
+        </p>
+
+    </div>
+
+
+    <div class="analyzer-container">
+
+        <!-- FORM -->
+
+        <div class="analyzer-card">
+
+            <form id="analysisForm"
+                  enctype="multipart/form-data">
+
+                <label>
+                    📷 Upload Plant / Leaf Image
+                </label>
+
+                <div class="upload-box">
+
+                    <input
+                        type="file"
+                        id="plantImage"
+                        name="plant_image"
+                        accept="image/*"
+                        required
+                    >
+
+                    <div class="upload-icon">
+                        📸
+                    </div>
+
+                    <h3>
+                        Choose Plant Image
+                    </h3>
+
+                    <p>
+                        JPG, PNG, JPEG or WEBP
+                    </p>
+
+                </div>
+
+
+                <!-- PREVIEW -->
+
+                <div id="previewContainer"
+                     class="preview-container">
+
+                    <img id="imagePreview"
+                         alt="Plant Preview">
+
+                </div>
+
+
+                <label>
+                    🌱 Select Plant
+                </label>
+
+                <select name="plant"
+                        id="plantSelect">
+
+                    {% for key, plant in plants.items() %}
+
+                    <option value="{{ key }}">
+                        {{ plant.icon }} {{ plant.name }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+                <label>
+                    🌾 Soil Condition
+                </label>
+
+                <select name="soil">
+
+                    <option value="good">
+                        🟢 Good / Healthy
+                    </option>
+
+                    <option value="dry">
+                        🟡 Dry
+                    </option>
+
+                    <option value="wet">
+                        🔵 Too Wet
+                    </option>
+
+                    <option value="poor">
+                        🔴 Poor Soil
+                    </option>
+
+                </select>
+
+
+                <label>
+                    🦠 Suspected Disease
+                </label>
+
+                <select name="disease">
+
+                    <option value="none">
+                        No Known Disease
+                    </option>
+
+                    {% for key, disease in diseases.items() %}
+
+                    <option value="{{ key }}">
+                        {{ disease.name }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+                <button
+                    type="submit"
+                    class="analyze-button">
+
+                    🔬 Analyze Plant
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- RESULT -->
+
+        <div class="result-card">
+
+            <div id="emptyResult"
+                 class="empty-result">
+
+                <div>
+                    🌿
+                </div>
+
+                <h2>
+                    Your Result Will Appear Here
+                </h2>
+
+                <p>
+                    Upload an image and click
+                    Analyze Plant.
+                </p>
+
+            </div>
+
+
+            <div id="resultContent"
+                 class="result-content">
+
+                <div class="result-image-wrapper">
+
+                    <img id="resultImage"
+                         alt="Uploaded plant">
+
+                </div>
+
+
+                <div class="health-score">
+
+                    <div>
+
+                        <span>
+                            Plant Health Score
+                        </span>
+
+                        <strong id="healthScore">
+                            0
+                        </strong>
+
+                    </div>
+
+                    <div class="score-bar">
+
+                        <div id="scoreBar">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="result-section">
+
+                    <h3>
+                        🌱 Plant Information
+                    </h3>
+
+                    <h2 id="resultPlant">
+                    </h2>
+
+                    <p id="resultDescription">
+                    </p>
+
+                    <div class="info-grid">
+
+                        <div>
+                            <b>Scientific Name</b>
+                            <span id="scientificName"></span>
+                        </div>
+
+                        <div>
+                            <b>Soil</b>
+                            <span id="resultSoil"></span>
+                        </div>
+
+                        <div>
+                            <b>Water</b>
+                            <span id="resultWater"></span>
+                        </div>
+
+                        <div>
+                            <b>Sunlight</b>
+                            <span id="resultSun"></span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="result-section disease-result">
+
+                    <h3>
+                        🦠 Disease Information
+                    </h3>
+
+                    <h2 id="resultDisease">
+                    </h2>
+
+                    <p id="diseaseSymptoms">
+                    </p>
+
+                    <p id="diseaseCause">
+                    </p>
+
+                    <p id="diseaseCare">
+                    </p>
+
+                    <p id="diseasePrevention">
+                    </p>
+
+                </div>
+
+
+                <div class="result-section">
+
+                    <h3>
+                        💡 Care Suggestions
+                    </h3>
+
+                    <ul id="suggestions">
+                    </ul>
+
+                </div>
+
+
+                <a id="plantLink"
+                   href="#"
+                   target="_blank"
+                   class="source-button">
+
+                    🔗 Open Plant Information
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- PLANT LIBRARY -->
+
+<section id="plants"
+         class="section library">
+
+    <div class="section-title">
+
+        <span>PLANT LIBRARY</span>
+
+        <h2>
+            Explore Plants
+        </h2>
+
+        <p>
+            Click any plant to see its information.
+        </p>
+
+    </div>
+
+
+    <div class="plant-grid">
+
+        {% for key, plant in plants.items() %}
+
+        <div class="plant-card"
+             onclick="showPlant('{{ key }}')">
+
+            <div class="plant-icon">
+                {{ plant.icon }}
+            </div>
+
+            <h3>
+                {{ plant.name }}
+            </h3>
+
+            <p>
+                {{ plant.scientific }}
+            </p>
+
+            <button>
+                View Information →
+            </button>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- PLANT MODAL -->
+
+<div id="plantModal"
+     class="modal">
+
+    <div class="modal-content">
+
+        <button class="close"
+                onclick="closeModal()">
+            ×
+        </button>
+
+        <div id="modalPlantIcon"
+             class="modal-icon">
+        </div>
+
+        <h2 id="modalPlantName">
+        </h2>
+
+        <p id="modalScientific">
+        </p>
+
+        <div class="modal-info">
+
+            <div>
+                <h3>🌱 About</h3>
+                <p id="modalDescription"></p>
+            </div>
+
+            <div>
+                <h3>🌾 Soil</h3>
+                <p id="modalSoil"></p>
+            </div>
+
+            <div>
+                <h3>💧 Water</h3>
+                <p id="modalWater"></p>
+            </div>
+
+            <div>
+                <h3>☀️ Sunlight</h3>
+                <p id="modalSun"></p>
+            </div>
+
+            <div>
+                <h3>🧪 Recorded / Traditional Uses</h3>
+                <p id="modalMedical"></p>
+            </div>
+
+            <div>
+                <h3>🦠 Common Diseases</h3>
+                <p id="modalDiseases"></p>
+            </div>
+
+        </div>
+
+        <a id="modalLink"
+           target="_blank"
+           class="source-button">
+
+            🔗 Research Plant
+
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- DISEASE SECTION -->
+
+<section id="diseases"
+         class="section disease-library">
+
+    <div class="section-title">
+
+        <span>DISEASE CENTER</span>
+
+        <h2>
+            Plant Disease Explorer
+        </h2>
+
+    </div>
+
+
+    <div class="disease-grid">
+
+        {% for key, disease in diseases.items() %}
+
+        <div class="disease-card">
+
+            <div class="disease-icon">
+                🦠
+            </div>
+
+            <h3>
+                {{ disease.name }}
+            </h3>
+
+            <p>
+                {{ disease.symptoms }}
+            </p>
+
+            <details>
+
+                <summary>
+                    View Care
+                </summary>
+
+                <p>
+                    <b>Cause:</b>
+                    {{ disease.causes }}
+                </p>
+
+                <p>
+                    <b>Care:</b>
+                    {{ disease.care }}
+                </p>
+
+                <p>
+                    <b>Prevention:</b>
+                    {{ disease.prevention }}
+                </p>
+
+            </details>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- AI ASSISTANT -->
+
+<section id="assistant"
+         class="section assistant-section">
+
+    <div class="section-title">
+
+        <span>SMART PLANT ASSISTANT</span>
+
+        <h2>
+            🤖 Ask Plant AI
+        </h2>
+
+        <p>
+            Ask questions about plant care, soil or diseases.
+        </p>
+
+    </div>
+
+
+    <div class="assistant-box">
+
+        <div id="chatMessages"
+             class="chat-messages">
+
+            <div class="bot-message">
+
+                🌱 Hello! I'm SmartPlant AI.
+
+                <br><br>
+
+                Ask me things like:
+
+                <br>
+
+                • What soil is good for tomato?
+
+                <br>
+
+                • How should I water my plant?
+
+                <br>
+
+                • What diseases affect mango?
+
+                <br>
+
+                • What are the traditional uses of tulsi?
+
+            </div>
+
+        </div>
+
+
+        <div class="chat-controls">
+
+            <select id="chatPlant">
+
+                {% for key, plant in plants.items() %}
+
+                <option value="{{ key }}">
+                    {{ plant.name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <input
+                type="text"
+                id="questionInput"
+                placeholder="Ask about your plant..."
+            >
+
+            <button onclick="askAI()">
+                Send
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+    <div class="logo">
+        🌱 SmartPlant AI
+    </div>
+
+    <p>
+        Plant education and care assistant.
+    </p>
+
+    <small>
+        Information is educational and should not replace
+        professional agricultural or medical advice.
+    </small>
+
+</footer>
+
+
+<script>
+
+    const plantDatabase =
+        {{ plants | tojson }};
+
+</script>
+
+
+<script src="{{ url_for('static', filename='script.js') }}">
+</script>
+
+</body>
+</html>
